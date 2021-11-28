@@ -1,0 +1,113 @@
+#https://towardsdatascience.com/pyvis-visualize-interactive-network-graphs-in-python-77e059791f01
+import csv
+import sys
+from collections import defaultdict
+from pyvis.network import Network
+import random
+
+
+def process(string):
+     x = string.strip()
+     x = x.replace('%3A', ':')
+     x = x.replace('%2F', '/')
+     if x.startswith('https://web.archive.org'):
+          x = x[23:]
+          i = x.find('http')
+          x = x[i:]
+     if x.startswith('http://'):
+          x = x[7:]
+          x = x.split('/', 1)[0]
+          return x
+     if x.startswith('https://'):
+          x = x[8:]
+          x = x.split('/', 1)[0]
+          return x
+     if 'http://' in x:
+          i = x.find('https://')
+          x = x[i + 7:]
+          x = x.split('/', 1)[0]
+          return x
+     if 'https://' in x:
+          i = x.find('https://')
+          x = x[i + 8:]
+          x = x.split('/', 1)[0]
+          return x
+     return None
+
+
+
+def getColorIndex(string, fake_urls, real_urls):
+     if string in fake_urls:
+          return 0
+     elif string in real_urls:
+          return 1
+     return 2
+
+net = Network()
+
+nodes = defaultdict(set)
+edges = defaultdict(set)
+
+colors = ['red', 'green', 'gray']
+
+fake_urls = ''
+with open('all_fake_urls') as train_fake_urls_file:
+     fake_urls = train_fake_urls_file.read().lower()
+
+real_urls = ''
+with open('all_real_urls') as train_real_urls_file:
+     real_urls = train_real_urls_file.read().lower()
+
+
+counts = defaultdict(set)
+url_to_domain = {}
+
+files = ['linkFile.txt', 'newLinkFile.txt']
+
+for f in files:
+     with open(f, encoding="utf8") as linkfile:
+          lines = linkfile.readlines()
+          for line in lines:
+               link = line.strip().split(' , ', 1)
+               if len(link) != 2:
+                    continue
+
+               first_url = link[0].lower()
+
+               first_domain = process(link[0].lower())
+               second_domain = process(link[1].lower())
+
+               firstColorIndex = getColorIndex(first_url, fake_urls, real_urls)
+               secondColorIndex = getColorIndex(link[1], fake_urls, real_urls)
+
+               if first_domain != None:
+                    nodes[first_domain].add(firstColorIndex)
+               if second_domain != None:
+                    nodes[second_domain].add(secondColorIndex)
+               if first_domain != None and second_domain != None:
+                    if first_domain != second_domain:
+                         edges[first_domain].add(second_domain)
+
+
+c = 0
+addedNodes = set()
+nodeToNum = {}
+for node in nodes:
+     if random.random() < 0.3:
+          net.add_node(c, node, color=colors[min(nodes[node])])
+          addedNodes.add(node)
+     nodeToNum[node] = c
+     c += 1
+
+     
+
+for node in edges:
+     for edge in edges[node]:
+          if node in addedNodes and edge in addedNodes:
+               net.add_edge(nodeToNum[node], nodeToNum[edge])
+
+print('length of nodes', len(nodes))
+
+
+net.show('edges_subset.html')
+
