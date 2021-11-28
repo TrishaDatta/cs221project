@@ -113,3 +113,9 @@ python3 compute_averages.py
 
 python3 analyze_results.py  
 
+
+DATA EXAMPLE
+
+The dataset is too large to upload to the Github repository, so I've uploaded a sample in 'news content.json'. The 'url' tag contains the url of the article, and the 'text' tag contains the text of the article used to create features.
+
+
