@@ -113,6 +113,10 @@ python3 compute_averages.py
 
 python3 analyze_results.py  
 
+\# find articles with that were incorrectly classified
+
+python3 error_analysis.py  
+
 
 DATA EXAMPLE
 
