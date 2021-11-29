@@ -32,7 +32,7 @@ with open('data/test_bag_of_words_0.csv') as csvfile:
 train_labels, train_set, test_labels, test_set = get_final_lists(train_labels, train_set, test_labels, test_set)
         
            
-clf = LogisticRegression()
+clf = LogisticRegression(max_iter=1000)
 clf.fit(np.array(train_set), np.array(train_labels))
 
 
