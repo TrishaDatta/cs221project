@@ -102,7 +102,7 @@ print(len(x))
 print(len(x[0]))
 print(len(labels))
 
-x_new = SelectKBest(chi2, k=4000).fit_transform(x, labels)
+#x_new = SelectKBest(chi2, k=4000).fit_transform(x, labels)
 
 
 
@@ -111,7 +111,7 @@ edge_index = torch.tensor([edge_1,
                            edge_2], dtype=torch.long)
 
 
-x_tensor = torch.tensor(x_new, dtype=torch.float)
+x_tensor = torch.tensor(x, dtype=torch.float)
 y_tensor = torch.tensor(labels, dtype=torch.long)
 
 
@@ -148,6 +148,7 @@ for i in range(100):
 
     preds = pred_tensor[data.test_mask].tolist()
     reals = data.y[data.test_mask].tolist()
+    print(preds[51], reals[51])
 
     tp = 0
     tn = 0
